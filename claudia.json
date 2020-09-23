@@ -1,0 +1,11 @@
+{
+  "lambda": {
+    "role": "simple-agenda-apis-executor",
+    "name": "simple-agenda-apis",
+    "region": "eu-west-3"
+  },
+  "api": {
+    "id": "y5f8ltszt1",
+    "module": "dist/app"
+  }
+}
