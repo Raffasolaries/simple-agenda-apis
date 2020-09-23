@@ -9,3 +9,5 @@ interface Meeting {
  links: StringArray,
  notes?: string
 }
+
+export = Meeting;
