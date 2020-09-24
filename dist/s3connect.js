@@ -9,15 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAgenda = void 0;
+exports.deleteMeeting = exports.putMeeting = exports.getAgenda = void 0;
 const AWS = require("aws-sdk");
+const uuid_1 = require("uuid");
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'raffasolaries' });
 AWS.config.credentials = credentials;
 const s3 = new AWS.S3();
-const params = {
-    Bucket: 'chiodiapaga-bucket',
-    Key: 'data.json'
-};
 const res = {
     state: 'KO',
     message: '',
@@ -25,8 +22,11 @@ const res = {
 };
 function getAgenda() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('getAgenda start', params);
         try {
+            const params = {
+                Bucket: 'chiodiapaga-bucket',
+                Key: 'data.json'
+            };
             const rawdata = yield s3.getObject(params).promise();
             const data = JSON.parse(rawdata.Body);
             res.state = 'OK';
@@ -43,3 +43,71 @@ function getAgenda() {
     });
 }
 exports.getAgenda = getAgenda;
+function putMeeting(meeting) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let rawagenda = yield getAgenda();
+            for (let i = 0; i < rawagenda.data.length; i++) {
+                rawagenda.data[i].id = uuid_1.v4();
+            }
+            meeting.id = uuid_1.v4();
+            rawagenda.data.push(meeting);
+            const newAgenda = Buffer.from(JSON.stringify(rawagenda.data), 'binary');
+            const params = {
+                Body: newAgenda,
+                Bucket: 'chiodiapaga-bucket',
+                Key: 'data.json'
+            };
+            const putAgenda = yield s3.putObject(params).promise();
+            res.state = 'OK',
+                res.message = 'Agenda updated',
+                res.data = putAgenda;
+            return res;
+        }
+        catch (err) {
+            console.error('An error occurred', err);
+            res.message = 'putMeeting error';
+            res.data = err;
+            return res;
+        }
+    });
+}
+exports.putMeeting = putMeeting;
+function deleteMeeting(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let found = -1;
+            const rawagenda = yield getAgenda();
+            for (let i = 0; i < rawagenda.data.length; i++) {
+                if (id === rawagenda.data[i].id) {
+                    found = i;
+                    rawagenda.data.splice(i, 1);
+                }
+            }
+            const newAgenda = Buffer.from(JSON.stringify(rawagenda.data), 'binary');
+            const params = {
+                Body: newAgenda,
+                Bucket: 'chiodiapaga-bucket',
+                Key: 'data.json'
+            };
+            const putAgenda = yield s3.putObject(params).promise();
+            if (found !== -1) {
+                res.state = 'OK';
+                res.message = 'Meeting deleted',
+                    res.data = rawagenda.data[found];
+                return res;
+            }
+            else {
+                res.message = 'Meeting not found';
+                return res;
+            }
+        }
+        catch (err) {
+            console.error('An error occurred', err);
+            res.message = 'deleteMeeting error';
+            res.data = err;
+            return res;
+        }
+    });
+}
+exports.deleteMeeting = deleteMeeting;

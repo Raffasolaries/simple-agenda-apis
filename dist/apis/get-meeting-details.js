@@ -18,7 +18,6 @@ const getMeetingDetails = function (request) {
             data: null
         };
         const meetingsData = yield s3connect_1.getAgenda();
-        console.log('meetingsData', meetingsData);
         if (!request['pathParams']['id-meeting']) {
             res.message = 'Missing meeting id';
             return res;

@@ -33,5 +33,6 @@ declare module "claudia-api-builder" {
   constructor(options?: any);
 
   get(uri: string, callback: Function): void;
+  put(uri: string, callback: Function): void;
  }
 }
