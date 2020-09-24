@@ -9,41 +9,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getData = exports.S3Connect = void 0;
-const S3 = require("aws-sdk/clients/s3");
-class S3Connect {
-    constructor() {
-        this.s3 = new S3({
-            accessKeyId: 'AKIAW7WMUAANVPOWRFWJ',
-            secretAccessKey: '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',
-            region: 'eu-west-3'
-        });
-        this.params = {
-            Bucket: 'chiodiapaga-bucket',
-            Key: 'data.json'
-        };
-    }
-    getData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.s3.getObject(this.params, function (err, rawdata) {
-                const res = {
-                    state: 'KO',
-                    message: '',
-                    data: null
-                };
-                if (err) {
-                    res.message = 'getObject error';
-                    res.data = err;
-                    return res;
-                }
-                const data = JSON.parse(rawdata.Body);
-                //const file: any = data.Body;
-                res.state = 'OK';
-                res.message = 'Object retrieved';
-                res.data = data;
+exports.getData = void 0;
+const AWS = require("aws-sdk");
+const credentials = new AWS.SharedIniFileCredentials({ profile: 'raffasolaries' });
+AWS.config.credentials = credentials;
+const s3 = new AWS.S3();
+const params = {
+    Bucket: 'chiodiapaga-bucket',
+    Key: 'data.json'
+};
+const res = {
+    state: 'KO',
+    message: '',
+    data: null
+};
+function getData() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return s3.getObject(params, function (err, rawdata) {
+            if (err) {
+                res.message = 'getObject error';
+                res.data = err;
                 return res;
-            });
+            }
+            const data = JSON.parse(rawdata.Body);
+            //const file: any = data.Body;
+            res.state = 'OK';
+            res.message = 'Object retrieved';
+            res.data = data;
+            return res;
         });
-    }
+    });
 }
-exports.S3Connect = S3Connect;
+exports.getData = getData;

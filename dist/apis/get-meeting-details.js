@@ -17,8 +17,7 @@ const getMeetingDetails = function (request) {
             message: '',
             data: null
         };
-        const s3connect = new s3connect_1.S3Connect;
-        return s3connect.getData().then(function (meetingsData) {
+        return s3connect_1.getData().then(function (meetingsData) {
             if (!request['pathParams']['id-meeting']) {
                 res.message = 'Missing meeting id';
                 return res;

@@ -1,7 +1,7 @@
 import Response from '../interfaces/Response';
 import Meeting from '../interfaces/Meeting';
 //import * as rawdata from '../data.json';
-import { S3Connect } from '../s3connect';
+import { getData } from '../s3connect';
 
 const getMeetingDetails = async function (request: any) {
  const res: Response = {
@@ -9,8 +9,8 @@ const getMeetingDetails = async function (request: any) {
   message: '',
   data: null
  };
- const s3connect = new S3Connect;
- return s3connect.getData().then(function (meetingsData: any) {
+
+ return getData().then(function (meetingsData: any) {
   if (!request['pathParams']['id-meeting']) {
    res.message = 'Missing meeting id'
    return res;

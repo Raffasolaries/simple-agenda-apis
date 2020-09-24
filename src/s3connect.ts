@@ -1,36 +1,36 @@
-import S3 = require('aws-sdk/clients/s3');
+import AWS = require('aws-sdk');
 import Response  from './interfaces/Response';
 import Meeting from './interfaces/Meeting';
 
-export class S3Connect {
- private s3 = new S3();
+const credentials = new AWS.SharedIniFileCredentials({profile: 'raffasolaries'});
+AWS.config.credentials = credentials;
 
- private params = {
-  Bucket: 'chiodiapaga-bucket',
-  Key: 'data.json'
- };
+const s3 = new AWS.S3();
 
- constructor() {}
+const params = {
+ Bucket: 'chiodiapaga-bucket',
+ Key: 'data.json'
+};
 
- async getData() {
-  return this.s3.getObject(this.params, function (err: any, rawdata: any): Response {
-   const res: Response = {
-    state: 'KO',
-    message: '',
-    data: null
-   };
-   if (err) {
-    res.message = 'getObject error';
-    res.data = err
-    return res;
-   }
-   const data: Meeting[] = JSON.parse(rawdata.Body); 
-   //const file: any = data.Body;
-   res.state = 'OK';
-   res.message = 'Object retrieved';
-   res.data = data;
+const res: Response = {
+ state: 'KO',
+ message: '',
+ data: null
+};
+
+export async function getData() {
+ return s3.getObject(params, function (err: any, rawdata: any): Response {
+  if (err) {
+   res.message = 'getObject error';
+   res.data = err
    return res;
-  });
- }
+  }
+  const data: Meeting[] = JSON.parse(rawdata.Body); 
+  //const file: any = data.Body;
+  res.state = 'OK';
+  res.message = 'Object retrieved';
+  res.data = data;
+  return res;
+ });
 }
 
