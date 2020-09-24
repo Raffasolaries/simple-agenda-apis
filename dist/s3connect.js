@@ -25,19 +25,21 @@ const res = {
 };
 function getAgenda() {
     return __awaiter(this, void 0, void 0, function* () {
-        return s3.getObject(params, function (err, rawdata) {
-            if (err) {
-                res.message = 'getObject error';
-                res.data = err;
-                return res;
-            }
+        console.log('getAgenda start', params);
+        try {
+            const rawdata = yield s3.getObject(params).promise();
             const data = JSON.parse(rawdata.Body);
-            //const file: any = data.Body;
             res.state = 'OK';
             res.message = 'Object retrieved';
             res.data = data;
             return res;
-        });
+        }
+        catch (err) {
+            console.error('An error occurred', err);
+            res.message = 'getObject error';
+            res.data = err;
+            return res;
+        }
     });
 }
 exports.getAgenda = getAgenda;

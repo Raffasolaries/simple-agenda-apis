@@ -17,11 +17,13 @@ const getMeetingDetails = function (request) {
             message: '',
             data: null
         };
-        return s3connect_1.getAgenda().then(function (meetingsData) {
-            if (!request['pathParams']['id-meeting']) {
-                res.message = 'Missing meeting id';
-                return res;
-            }
+        const meetingsData = yield s3connect_1.getAgenda();
+        console.log('meetingsData', meetingsData);
+        if (!request['pathParams']['id-meeting']) {
+            res.message = 'Missing meeting id';
+            return res;
+        }
+        if (Array.isArray(meetingsData.data)) {
             const result = meetingsData.data.filter(function (item) { return item.id === request['pathParams']['id-meeting']; });
             if (result.length === 0) {
                 res.message = 'No Matched meeting';
@@ -32,7 +34,10 @@ const getMeetingDetails = function (request) {
                     res.data = result[0];
             }
             return res;
-        });
+        }
+        else {
+            return meetingsData;
+        }
     });
 };
 module.exports = getMeetingDetails;
