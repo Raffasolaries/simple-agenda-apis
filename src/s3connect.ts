@@ -3,11 +3,7 @@ import Response  from './interfaces/Response';
 import Meeting from './interfaces/Meeting';
 
 export class S3Connect {
- private s3 = new S3({
-  accessKeyId: 'AKIAW7WMUAANVPOWRFWJ',
-  secretAccessKey: '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',
-  region: 'eu-west-3'
- });
+ private s3 = new S3();
 
  private params = {
   Bucket: 'chiodiapaga-bucket',
@@ -37,10 +33,4 @@ export class S3Connect {
   });
  }
 }
-
-
-export {
- getData
-}
-
 
