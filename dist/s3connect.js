@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getData = void 0;
+exports.getAgenda = void 0;
 const AWS = require("aws-sdk");
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'raffasolaries' });
 AWS.config.credentials = credentials;
@@ -23,7 +23,7 @@ const res = {
     message: '',
     data: null
 };
-function getData() {
+function getAgenda() {
     return __awaiter(this, void 0, void 0, function* () {
         return s3.getObject(params, function (err, rawdata) {
             if (err) {
@@ -40,4 +40,4 @@ function getData() {
         });
     });
 }
-exports.getData = getData;
+exports.getAgenda = getAgenda;

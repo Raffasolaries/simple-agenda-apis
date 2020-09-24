@@ -18,7 +18,7 @@ const res: Response = {
  data: null
 };
 
-export async function getData() {
+export async function getAgenda() {
  return s3.getObject(params, function (err: any, rawdata: any): Response {
   if (err) {
    res.message = 'getObject error';
