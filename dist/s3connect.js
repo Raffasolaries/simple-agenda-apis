@@ -36,6 +36,7 @@ function getAgenda() {
         }
         catch (err) {
             console.error('An error occurred', err);
+            res.message = 'KO';
             res.message = 'getObject error';
             res.data = err;
             return res;
@@ -46,12 +47,16 @@ exports.getAgenda = getAgenda;
 function putMeeting(meeting) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let rawagenda = yield getAgenda();
-            for (let i = 0; i < rawagenda.data.length; i++) {
-                rawagenda.data[i].id = uuid_1.v4();
-            }
-            meeting.id = uuid_1.v4();
-            rawagenda.data.push(meeting);
+            const rawagenda = yield getAgenda();
+            const meetingData = {
+                id: uuid_1.v4(),
+                date: meeting.date,
+                title: meeting.title,
+                description: meeting.description,
+                links: meeting.links,
+                notes: meeting.notes
+            };
+            rawagenda.data.push(meetingData);
             const newAgenda = Buffer.from(JSON.stringify(rawagenda.data), 'binary');
             const params = {
                 Body: newAgenda,
@@ -66,6 +71,7 @@ function putMeeting(meeting) {
         }
         catch (err) {
             console.error('An error occurred', err);
+            res.state = 'KO';
             res.message = 'putMeeting error';
             res.data = err;
             return res;
@@ -77,14 +83,24 @@ function deleteMeeting(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let found = -1;
+            let deleted = {
+                id: '',
+                date: '',
+                title: '',
+                description: '',
+                links: [],
+                notes: '',
+            };
             const rawagenda = yield getAgenda();
-            for (let i = 0; i < rawagenda.data.length; i++) {
-                if (id === rawagenda.data[i].id) {
+            let agenda = rawagenda.data;
+            for (let i = 0; i < agenda.length; i++) {
+                if (id === agenda[i].id) {
                     found = i;
-                    rawagenda.data.splice(i, 1);
+                    deleted = agenda[i];
+                    agenda.splice(i, 1);
                 }
             }
-            const newAgenda = Buffer.from(JSON.stringify(rawagenda.data), 'binary');
+            const newAgenda = Buffer.from(JSON.stringify(agenda), 'binary');
             const params = {
                 Body: newAgenda,
                 Bucket: 'chiodiapaga-bucket',
@@ -94,11 +110,13 @@ function deleteMeeting(id) {
             if (found !== -1) {
                 res.state = 'OK';
                 res.message = 'Meeting deleted',
-                    res.data = rawagenda.data[found];
+                    res.data = deleted;
                 return res;
             }
             else {
+                res.state = 'KO';
                 res.message = 'Meeting not found';
+                res.data = null;
                 return res;
             }
         }

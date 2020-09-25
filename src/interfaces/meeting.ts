@@ -4,7 +4,7 @@ interface StringArray {
 
 interface Meeting {
  id: string,
- date: number,
+ date: string,
  title: string,
  description: string,
  links: StringArray,
