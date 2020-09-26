@@ -17,8 +17,9 @@ const AWS = require("aws-sdk");
 const uuid_1 = require("uuid");
 const moment_1 = __importDefault(require("moment"));
 require("moment/locale/it");
-const credentials = new AWS.SharedIniFileCredentials({ profile: 'raffasolaries' });
-AWS.config.credentials = credentials;
+// Add credentials if you want to test locally
+// const credentials = new AWS.SharedIniFileCredentials({profile: 'raffasolaries'});
+// AWS.config.credentials = credentials;
 const s3 = new AWS.S3();
 const res = {
     state: 'KO',

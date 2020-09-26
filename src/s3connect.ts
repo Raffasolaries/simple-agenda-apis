@@ -5,8 +5,9 @@ import 'moment/locale/it';
 import Response  from './interfaces/Response';
 import Meeting from './interfaces/Meeting';
 
-const credentials = new AWS.SharedIniFileCredentials({profile: 'raffasolaries'});
-AWS.config.credentials = credentials;
+// Add credentials if you want to test locally
+// const credentials = new AWS.SharedIniFileCredentials({profile: 'raffasolaries'});
+// AWS.config.credentials = credentials;
 
 const s3 = new AWS.S3();
 
