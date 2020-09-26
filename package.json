@@ -8,7 +8,7 @@
     "create": "tsc && claudia create --profile raffasolaries --region eu-west-3 --api-module dist/app --no-optional-dependencies",
     "update": "tsc && claudia update --profile raffasolaries",
     "destroy": "claudia destroy --profile raffasolaries",
-    "test": "tsc && jasmine-node --verbose specs"
+    "test": "tsc && jasmine-node --verbose spec"
   },
   "repository": {
     "type": "git",
