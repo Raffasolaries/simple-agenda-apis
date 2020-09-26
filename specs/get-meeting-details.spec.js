@@ -4,7 +4,7 @@
 	'use strict';
  const underTest = require('../dist/app');
 	
-	describe('Get meeting details', () => {
+	describe('Gets meeting details', () => {
 		var lambdaContextSpy, idMeeting = '449774a3-0cbe-49b2-89f5-2df57e648d22';
 		beforeEach(() => {
 			lambdaContextSpy = jasmine.createSpyObj('lambdaContext', ['done']);
