@@ -34,5 +34,7 @@ declare module "claudia-api-builder" {
 
   get(uri: string, callback: Function): void;
   put(uri: string, callback: Function): void;
+  post(uri: string, callback: Function): void;
+  delete(uri: string, callback: Function): void;
  }
 }

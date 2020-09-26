@@ -3,11 +3,11 @@ interface StringArray {
 }
 
 interface Meeting {
- id: string,
- date: string,
+ id?: string,
+ date: number,
  title: string,
- description: string,
- links: StringArray,
+ description?: string,
+ links?: StringArray,
  notes?: string
 }
 

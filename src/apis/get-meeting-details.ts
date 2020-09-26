@@ -9,11 +9,11 @@ const getMeetingDetails = async function (request: any) {
   message: '',
   data: null
  };
- const meetingsData: Response = await getAgenda();
  if (!request['pathParams']['id-meeting']) {
   res.message = 'Missing meeting id'
   return res;
  }
+ const meetingsData: Response = await getAgenda();
  if (Array.isArray(meetingsData.data)) {
   const result = meetingsData.data.filter(function (item: Meeting) { return item.id === request['pathParams']['id-meeting']; });
   if (result.length === 0) {

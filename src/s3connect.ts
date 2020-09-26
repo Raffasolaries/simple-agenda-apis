@@ -1,8 +1,9 @@
 import AWS = require('aws-sdk');
 import { v4 as uuid } from 'uuid';
+import moment from 'moment';
+import 'moment/locale/it';
 import Response  from './interfaces/Response';
 import Meeting from './interfaces/Meeting';
-
 
 const credentials = new AWS.SharedIniFileCredentials({profile: 'raffasolaries'});
 AWS.config.credentials = credentials;
@@ -36,6 +37,37 @@ export async function getAgenda(): Promise<any> {
  }
 }
 
+export async function getWeekAgenda(from: number): Promise<any> {
+ try {
+  const params = {
+   Bucket: 'chiodiapaga-bucket',
+   Key: 'data.json'
+  };
+  const rawdata: any = await s3.getObject(params).promise();
+  const data: Meeting[] = JSON.parse(rawdata.Body);
+  let weekAgenda: Meeting[] = [];
+  for (let i=0; i<data.length; i++) {
+   if (moment.unix(data[i].date).isBetween(moment.unix(from), moment.unix(from).add(1, 'week'))) {
+    weekAgenda.push(data[i]);
+   }
+  }
+  if (weekAgenda.length === 0) {
+   res.message = 'Your week plan is empty';
+   return res;
+  }
+  res.state = 'OK';
+  res.message = 'Object retrieved';
+  res.data = weekAgenda;
+  return res;
+ } catch (err) {
+  console.error('An error occurred', err);
+  res.message = 'KO';
+  res.message = 'getWeekAgenda error';
+  res.data = err
+  return res;
+ }
+}
+
 export async function putMeeting(meeting: Meeting): Promise<any> {
  try {
   const rawagenda = await getAgenda();
@@ -57,7 +89,10 @@ export async function putMeeting(meeting: Meeting): Promise<any> {
   const putAgenda = await s3.putObject(params).promise();
   res.state = 'OK',
   res.message = 'Agenda updated',
-  res.data = putAgenda;
+  res.data = {
+   res: putAgenda,
+   meeting: meetingData
+  };
   return res;
  } catch (err) {
   console.error('An error occurred', err);
@@ -73,7 +108,7 @@ export async function deleteMeeting(id: string): Promise<any> {
   let found: number = -1;
   let deleted: Meeting = {
    id: '',
-   date: '',
+   date: 0,
    title: '',
    description: '',
    links: [],

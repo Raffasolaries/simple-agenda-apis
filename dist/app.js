@@ -12,33 +12,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const ApiBuilder = require("claudia-api-builder");
-const moment_1 = __importDefault(require("moment"));
 require("moment/locale/it");
 const get_meeting_details_1 = __importDefault(require("./apis/get-meeting-details"));
+const add_meeting_1 = __importDefault(require("./apis/add-meeting"));
+const delete_meeting_1 = __importDefault(require("./apis/delete-meeting"));
+const get_meeting_week_1 = __importDefault(require("./apis/get-meeting-week"));
 // import addMeeting from './apis/add-meeting';
 const api = new ApiBuilder();
-api.get('/hello', function () {
-    return 'hello world';
-});
-api.get('/api/1.0/tomorrow', function (request) {
-    return {
-        request: request,
-        tomorrow: moment_1.default().add(1, 'days').format('X')
-    };
-});
 api.get('/api/1.0/meeting/{id-meeting}', function (request) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield get_meeting_details_1.default(request);
     });
 });
-api.get('/api/1.0/meeting-week', function (request) {
+api.delete('/api/1.0/meeting/{id-meeting}', function (request) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield get_meeting_details_1.default(request);
+        return yield delete_meeting_1.default(request);
     });
 });
-api.put('/api/1.0/meeting', function (request) {
+api.get('/api/1.0/meeting-week/{from}', function (request) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield get_meeting_details_1.default(request);
+        return yield get_meeting_week_1.default(request);
+    });
+});
+api.post('/api/1.0/meeting', function (request) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield add_meeting_1.default(request);
     });
 });
 module.exports = api;

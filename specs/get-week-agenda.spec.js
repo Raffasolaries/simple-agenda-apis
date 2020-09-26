@@ -2,28 +2,29 @@
 /* jshint node: true */
 ;(function () {
 	'use strict';
- const underTest = require('../dist/app');
+ const underTest = require('../dist/app'),
+  moment = require('moment');
 	
-	describe('Get meeting details', () => {
-		var lambdaContextSpy, idMeeting = '449774a3-0cbe-49b2-89f5-2df57e648d22';
+	describe('Get week agenda', () => {
+		var lambdaContextSpy, from = moment().subtract(1, 'days').format('X');
 		beforeEach(() => {
 			lambdaContextSpy = jasmine.createSpyObj('lambdaContext', ['done']);
   });
   
-		it('returns a meeting detail with object data', (done) => {
+		it('returns the week agenda starting from yesterday', (done) => {
    underTest.proxyRouter({
     headers: {
      'Content-Type': 'text/plain'
     },
     requestContext: {
-     resourcePath: '/api/1.0/meeting/{id-meeting}',
+     resourcePath: '/api/1.0/meeting-week/{from}',
      httpMethod: 'GET',
     },
     stageVariables: {
      lambdaVersion: 'latest'
     },
     pathParameters: {
-     ['id-meeting']: idMeeting
+     from: from
     },
     body: null
    }, lambdaContextSpy).then(() => {
@@ -33,7 +34,7 @@
      jasmine.objectContaining({
       statusCode: 200
      }));
-    console.log('get meeting contextBody', contextBody);
+    console.log('get week agenda contextBody', contextBody);
     expect(contextBody).toContain('\"state\":\"OK\"');
     expect(contextBody).toContain('data');
    }).then(done, done.fail);

@@ -8,10 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteMeeting = exports.putMeeting = exports.getAgenda = void 0;
+exports.deleteMeeting = exports.putMeeting = exports.getWeekAgenda = exports.getAgenda = void 0;
 const AWS = require("aws-sdk");
 const uuid_1 = require("uuid");
+const moment_1 = __importDefault(require("moment"));
+require("moment/locale/it");
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'raffasolaries' });
 AWS.config.credentials = credentials;
 const s3 = new AWS.S3();
@@ -44,6 +49,40 @@ function getAgenda() {
     });
 }
 exports.getAgenda = getAgenda;
+function getWeekAgenda(from) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const params = {
+                Bucket: 'chiodiapaga-bucket',
+                Key: 'data.json'
+            };
+            const rawdata = yield s3.getObject(params).promise();
+            const data = JSON.parse(rawdata.Body);
+            let weekAgenda = [];
+            for (let i = 0; i < data.length; i++) {
+                if (moment_1.default.unix(data[i].date).isBetween(moment_1.default.unix(from), moment_1.default.unix(from).add(1, 'week'))) {
+                    weekAgenda.push(data[i]);
+                }
+            }
+            if (weekAgenda.length === 0) {
+                res.message = 'Your week plan is empty';
+                return res;
+            }
+            res.state = 'OK';
+            res.message = 'Object retrieved';
+            res.data = weekAgenda;
+            return res;
+        }
+        catch (err) {
+            console.error('An error occurred', err);
+            res.message = 'KO';
+            res.message = 'getWeekAgenda error';
+            res.data = err;
+            return res;
+        }
+    });
+}
+exports.getWeekAgenda = getWeekAgenda;
 function putMeeting(meeting) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -66,7 +105,10 @@ function putMeeting(meeting) {
             const putAgenda = yield s3.putObject(params).promise();
             res.state = 'OK',
                 res.message = 'Agenda updated',
-                res.data = putAgenda;
+                res.data = {
+                    res: putAgenda,
+                    meeting: meetingData
+                };
             return res;
         }
         catch (err) {
@@ -85,7 +127,7 @@ function deleteMeeting(id) {
             let found = -1;
             let deleted = {
                 id: '',
-                date: '',
+                date: 0,
                 title: '',
                 description: '',
                 links: [],

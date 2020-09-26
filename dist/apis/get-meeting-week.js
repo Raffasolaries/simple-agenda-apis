@@ -10,33 +10,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //import * as rawdata from '../data.json';
 const s3connect_1 = require("../s3connect");
-const getMeetingDetails = function (request) {
+const getWeek = function (request) {
     return __awaiter(this, void 0, void 0, function* () {
         const res = {
             state: 'KO',
             message: '',
             data: null
         };
-        if (!request['pathParams']['id-meeting']) {
-            res.message = 'Missing meeting id';
+        if (!request['pathParams']['from']) {
+            res.message = 'Missing start date';
             return res;
         }
-        const meetingsData = yield s3connect_1.getAgenda();
-        if (Array.isArray(meetingsData.data)) {
-            const result = meetingsData.data.filter(function (item) { return item.id === request['pathParams']['id-meeting']; });
-            if (result.length === 0) {
-                res.message = 'No Matched meeting';
-            }
-            else {
-                res.state = 'OK',
-                    res.message = 'Found meeting',
-                    res.data = result[0];
-            }
-            return res;
-        }
-        else {
-            return meetingsData;
-        }
+        const weekData = yield s3connect_1.getWeekAgenda(+request['pathParams']['from']);
+        return weekData;
     });
 };
-module.exports = getMeetingDetails;
+module.exports = getWeek;

@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //import * as rawdata from '../data.json';
 const s3connect_1 = require("../s3connect");
-const getMeetingDetails = function (request) {
+const dropMeeting = function (request) {
     return __awaiter(this, void 0, void 0, function* () {
         const res = {
             state: 'KO',
@@ -21,22 +21,9 @@ const getMeetingDetails = function (request) {
             res.message = 'Missing meeting id';
             return res;
         }
-        const meetingsData = yield s3connect_1.getAgenda();
-        if (Array.isArray(meetingsData.data)) {
-            const result = meetingsData.data.filter(function (item) { return item.id === request['pathParams']['id-meeting']; });
-            if (result.length === 0) {
-                res.message = 'No Matched meeting';
-            }
-            else {
-                res.state = 'OK',
-                    res.message = 'Found meeting',
-                    res.data = result[0];
-            }
-            return res;
-        }
-        else {
-            return meetingsData;
-        }
+        const idMeeting = request['pathParams']['id-meeting'];
+        const resAdded = yield s3connect_1.deleteMeeting(idMeeting);
+        return resAdded;
     });
 };
-module.exports = getMeetingDetails;
+module.exports = dropMeeting;
