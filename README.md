@@ -36,6 +36,5 @@ Il nostro obiettivo è trovare le risposte a queste domande:
 Verrano prese in considerazione tutte le aggiunte alle traccia ed in particolar modo:
 
 - Scrittura di Test *command: npm run test*
-- Documentazione API con Swagger 
-- [link](https://app.swaggerhub.com/apis/Raffasolaries/simple-agenda-apis/1.0.0, "Swagger Documentation")
+- Documentazione API con Swagger [link](https://app.swaggerhub.com/apis/Raffasolaries/simple-agenda-apis/1.0.0, "Swagger Documentation")
 - Login e Security API
