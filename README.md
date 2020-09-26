@@ -35,6 +35,10 @@ Il nostro obiettivo è trovare le risposte a queste domande:
 #### Plus
 Verrano prese in considerazione tutte le aggiunte alle traccia ed in particolar modo:
 
-- Scrittura di Test *command: npm run test*
+- Scrittura di Test 
+- per lanciare i tests in locale, aggiungere le credenziali in /src/s3connect.ts *command: npm run test*
 - Documentazione API con Swagger [link](https://app.swaggerhub.com/apis/Raffasolaries/simple-agenda-apis/1.0.0, "Swagger Documentation")
 - Login e Security API
+
+#### Esempio dati
+File data.json
